@@ -1,0 +1,499 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Wit.SDK.Modular.Sensor.Modular.Connector.Role;
+using Wit.SDK.Modular.Sensor.Modular.Connector.Utils;
+using Wit.SDK.Modular.Sensor.Modular.DataProcessor.Constant;
+using Wit.SDK.Modular.WitSensorApi.Modular.BWT901BLE;
+
+namespace Wit.Example_BWT901BLE
+{
+    /// <summary>
+    /// 程序主窗口
+    /// 说明：
+    /// 1.本程序是维特智能开发的BWT901BLE九轴传感器示例程序
+    /// 2.适用示例程序前请咨询技术支持,询问本示例程序是否支持您的传感器
+    /// 3.使用前请了解传感器的通信协议
+    /// 4.本程序只有一个窗口,所有逻辑都在这里
+    /// </summary>
+    public partial class Form1 : Form
+    {
+        /// <summary>
+        /// 找到的设备
+        /// </summary>
+        private Dictionary<string, BWT901BLE> FoundDeviceDict = new Dictionary<string, BWT901BLE>();
+
+        /// <summary>
+        /// 控制自动刷新数据线程是否工作
+        /// </summary>
+        public bool EnableRefreshDataTh { get; private set; }
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        /// <summary>
+        /// 窗体加载时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // 开启数据刷新线程
+            Thread thread = new Thread(RefreshDataTh);
+            thread.IsBackground = true;
+            EnableRefreshDataTh = true;
+            thread.Start();
+        }
+
+        /// <summary>
+        /// 窗体关闭时
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // 关闭刷新数据线程
+            EnableRefreshDataTh = false;
+            // 关闭蓝牙搜索
+            stopScanButton_Click(null, null);
+            Process.GetCurrentProcess().Kill();
+        }
+
+        /// <summary>
+        /// 开始搜索
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void startScanButton_Click(object sender, EventArgs e)
+        {
+            // 清除找到的设备
+            FoundDeviceDict.Clear();
+
+            // 关闭之前打开的设备
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+                bWT901BLE.Close();
+            }
+
+            // 让蓝牙管理器开始搜索设备
+            WitBluetoothManager bluetoothManager = WitBluetoothManagerHelper.GetWitBluetoothManager();
+            bluetoothManager.OnDeviceFound += new WitBluetoothManager.OnDeviceFoundHalder(OnFoundDevice);
+            bluetoothManager.OnDeviceStatu += new WitBluetoothManager.OnDeviceStatuHalder(OnDeviceStatu);
+            bluetoothManager.StartScan();
+        }
+
+        /// <summary>
+        /// 当搜索到蓝牙设备时会回调这个方法
+        /// </summary>
+        /// <param name="macAddr"></param>
+        /// <param name="sName"></param>
+        /// <param name="dType"></param>
+        /// <param name="mType"></param>
+        private void OnFoundDevice(string macAddr, string sName, int dType, int mType)
+        {
+            // 如果搜索到WT开头的蓝牙设备
+            if (sName != null && sName.Contains("WT"))
+            {
+                // 如果这个设备是新找到的
+                if (FoundDeviceDict.ContainsKey(macAddr) == false)
+                {
+                    BWT901BLE bWT901BLE = new BWT901BLE();
+                    // 指定连接的蓝牙MAC码
+                    bWT901BLE.SetMacAddr(macAddr);
+                    // 设置设备名称
+                    bWT901BLE.SetDeviceName(sName);
+                    FoundDeviceDict.Add(macAddr, bWT901BLE);
+                    // 打开这个设备
+                    bWT901BLE.Open();
+                    bWT901BLE.OnRecord += BWT901BLE_OnRecord;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 当传感器数据刷新时会调用这里，您可以在这里记录数据
+        /// </summary>
+        /// <param name="BWT901BLE"></param>
+        private void BWT901BLE_OnRecord(BWT901BLE BWT901BLE)
+        {
+            string text = GetDeviceData(BWT901BLE);
+            Debug.WriteLine(text);
+        }
+
+        /// <summary>
+        /// 停止搜索
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void stopScanButton_Click(object sender, EventArgs e)
+        {
+            // 让蓝牙管理器停止搜索
+            WitBluetoothManager bluetoothManager = WitBluetoothManagerHelper.GetWitBluetoothManager();
+            bluetoothManager.StopScan();
+        }
+
+        /// <summary>
+        /// 设备状态发生时会调这个方法
+        /// </summary>
+        /// <param name="macAddr"></param>
+        /// <param name="mType"></param>
+        /// <param name="sMsg"></param>
+        private void OnDeviceStatu(string macAddr, int mType, string sMsg)
+        {
+            if (mType == 20)
+            {
+                // 断开连接
+                Debug.WriteLine(macAddr + "断开连接");
+            }
+
+            if (mType == 11)
+            {
+                // 连接失败
+                Debug.WriteLine(macAddr + "连接失败");
+            }
+
+            if (mType == 10)
+            {
+                // 连接成功
+                Debug.WriteLine(macAddr + "连接成功");
+            }
+        }
+
+        /// <summary>
+        /// 刷新数据线程
+        /// </summary>
+        private void RefreshDataTh()
+        {
+            while (EnableRefreshDataTh)
+            {
+                // 多设备的展示数据
+                string DeviceData = "";
+                Thread.Sleep(100);
+                // 刷新所有连接设备的数据
+                for (int i = 0; i < FoundDeviceDict.Count; i++)
+                {
+                    var keyValue = FoundDeviceDict.ElementAt(i);
+                    BWT901BLE bWT901BLE = keyValue.Value;
+                    if (bWT901BLE.IsOpen())
+                    {
+                        DeviceData += GetDeviceData(bWT901BLE) + "\r\n";
+                    }
+                }
+                dataRichTextBox.Invoke(new Action(() =>
+                {
+                    dataRichTextBox.Text = DeviceData;
+                }));
+            }
+        }
+
+        /// <summary>
+        /// 获得设备的数据
+        /// </summary>
+        private string GetDeviceData(BWT901BLE BWT901BLE)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(BWT901BLE.GetDeviceName()).Append("\n");
+            // 加速度
+            builder.Append("AccX").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AccX)).Append("g \t");
+            builder.Append("AccY").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AccY)).Append("g \t");
+            builder.Append("AccZ").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AccZ)).Append("g \n");
+            // 角速度
+            builder.Append("GyroX").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AsX)).Append("°/s \t");
+            builder.Append("GyroY").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AsY)).Append("°/s \t");
+            builder.Append("GyroZ").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AsZ)).Append("°/s \n");
+            // 角度
+            builder.Append("AngleX").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AngleX)).Append("° \t");
+            builder.Append("AngleY").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AngleY)).Append("° \t");
+            builder.Append("AngleZ").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.AngleZ)).Append("° \n");
+            // 磁场
+            builder.Append("MagX").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.HX)).Append("uT \t");
+            builder.Append("MagY").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.HY)).Append("uT \t");
+            builder.Append("MagZ").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.HZ)).Append("uT \n");
+            // 版本号
+            builder.Append("VersionNumber").Append(":").Append(BWT901BLE.GetDeviceData(WitSensorKey.VersionNumber)).Append("\n");
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// 加计校准
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void appliedCalibrationButton_Click(object sender, EventArgs e)
+        {
+            // 所有连接的蓝牙设备都加计校准
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.AppliedCalibration();
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x01, 0x01, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// 读取03寄存器
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void readReg03Button_Click(object sender, EventArgs e)
+        {
+            string reg03Value = "";
+            // 读取所有连接的蓝牙设备的03寄存器
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 等待时长
+                    int waitTime = 3000;
+                    // 发送读取命令，并且等待传感器返回数据，如果没读上来可以将 waitTime 延长，或者多读几次
+                    bWT901BLE.SendReadReg(0x03, waitTime);
+
+                    // 下面这行和上面等价推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x27, 0x03, 0x00 }, waitTime);
+
+                    // 拿到所有连接的蓝牙设备的值
+                    reg03Value += bWT901BLE.GetDeviceName() + "的寄存器03值为 :" + bWT901BLE.GetDeviceData("03") + "\r\n";
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            MessageBox.Show(reg03Value);
+        }
+
+        /// <summary>
+        ///  设置回传速率10Hz
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void returnRate10_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.SetReturnRate(0x06);
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x03, 0x06, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        ///  设置回传速率50Hz
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void returnRate50_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.SetReturnRate(0x08);
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x03, 0x08, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 设置带宽20Hz
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void bandWidth20_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.SetBandWidth(0x04);
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x1F, 0x04, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 设置带宽256Hz
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void bandWidth256_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.SetBandWidth(0x00);
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x1F, 0x00, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 开始磁场校准
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void startFieldCalibrationButton_Click(object sender, EventArgs e)
+        {
+            // 开始所有连接的蓝牙设备的磁场校准
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.StartFieldCalibration();
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x01, 0x07, 0x00 });
+                    MessageBox.Show("开始磁场校准,请绕传感器XYZ三轴各转一圈,转完以后点击【结束磁场校准】");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 结束磁场校准
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void endFieldCalibrationButton_Click(object sender, EventArgs e)
+        {
+
+            // 结束所有连接的蓝牙设备的磁场校准
+            for (int i = 0; i < FoundDeviceDict.Count; i++)
+            {
+                var keyValue = FoundDeviceDict.ElementAt(i);
+                BWT901BLE bWT901BLE = keyValue.Value;
+
+                if (bWT901BLE.IsOpen() == false)
+                {
+                    return;
+                }
+                try
+                {
+                    // 解锁寄存器并发送命令
+                    bWT901BLE.UnlockReg();
+                    bWT901BLE.EndFieldCalibration();
+                    // 下面两行与上面等价,推荐使用上面的
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x69, 0x88, 0xb5 });
+                    //bWT901BLE.SendProtocolData(new byte[] { 0xff, 0xaa, 0x01, 0x00, 0x00 });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+    }
+}
