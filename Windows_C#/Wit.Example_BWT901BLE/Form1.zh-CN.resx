@@ -117,40 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="dataRichTextBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 22</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="dataRichTextBox.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="dataRichTextBox.Size" type="System.Drawing.Size, System.Drawing">
-    <value>750, 536</value>
-  </data>
-  <data name="groupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>309, 0</value>
-  </data>
-  <data name="groupBox1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="groupBox1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>758, 562</value>
-  </data>
   <data name="groupBox1.Text" xml:space="preserve">
     <value>传感器数据</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="bandWidth256.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="bandWidth256.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="bandWidth256.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 194</value>
   </data>
   <data name="bandWidth256.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 29</value>
+    <value>195, 23</value>
   </data>
   <data name="bandWidth256.Text" xml:space="preserve">
     <value>设置带宽 256Hz</value>
@@ -158,11 +137,11 @@
   <data name="bandWidth20.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="bandWidth20.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="bandWidth20.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 165</value>
   </data>
   <data name="bandWidth20.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 29</value>
+    <value>195, 23</value>
   </data>
   <data name="bandWidth20.Text" xml:space="preserve">
     <value>设置带宽 20Hz</value>
@@ -170,11 +149,11 @@
   <data name="returnRate50.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="returnRate50.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="returnRate50.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 135</value>
   </data>
   <data name="returnRate50.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 29</value>
+    <value>195, 23</value>
   </data>
   <data name="returnRate50.Text" xml:space="preserve">
     <value>设置回传速率 50Hz</value>
@@ -182,110 +161,50 @@
   <data name="returnRate10.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="returnRate10.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+  <data name="returnRate10.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 106</value>
   </data>
   <data name="returnRate10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 29</value>
+    <value>195, 23</value>
   </data>
   <data name="returnRate10.Text" xml:space="preserve">
     <value>设置回传速率 10Hz</value>
   </data>
   <data name="readReg03Button.Location" type="System.Drawing.Point, System.Drawing">
-    <value>20, 95</value>
-  </data>
-  <data name="readReg03Button.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="readReg03Button.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 29</value>
+    <value>15, 76</value>
   </data>
   <data name="readReg03Button.Text" xml:space="preserve">
     <value>读取03寄存器</value>
   </data>
   <data name="endFieldCalibrationButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>165, 288</value>
-  </data>
-  <data name="endFieldCalibrationButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="endFieldCalibrationButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 59</value>
+    <value>124, 230</value>
   </data>
   <data name="endFieldCalibrationButton.Text" xml:space="preserve">
     <value>结束磁场校准</value>
   </data>
   <data name="startFieldCalibrationButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>21, 288</value>
-  </data>
-  <data name="startFieldCalibrationButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="startFieldCalibrationButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>119, 59</value>
+    <value>16, 230</value>
   </data>
   <data name="startFieldCalibrationButton.Text" xml:space="preserve">
     <value>开始磁场校准</value>
   </data>
   <data name="appliedCalibrationButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 58</value>
-  </data>
-  <data name="appliedCalibrationButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="appliedCalibrationButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 29</value>
+    <value>14, 46</value>
   </data>
   <data name="appliedCalibrationButton.Text" xml:space="preserve">
     <value>加计校准</value>
   </data>
   <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 148</value>
-  </data>
-  <data name="groupBox3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="groupBox3.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
+    <value>0, 118</value>
   </data>
   <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>296, 414</value>
+    <value>222, 332</value>
   </data>
   <data name="groupBox3.Text" xml:space="preserve">
     <value>控制传感器</value>
   </data>
-  <data name="groupBox2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="groupBox2.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>296, 148</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>连接传感器</value>
-  </data>
-  <data name="leftPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="leftPanel.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 0, 13, 0</value>
-  </data>
-  <data name="leftPanel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>309, 562</value>
-  </data>
   <data name="stopScanButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
-  </data>
-  <data name="stopScanButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>177, 58</value>
-  </data>
-  <data name="stopScanButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="stopScanButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
   </data>
   <data name="stopScanButton.Text" xml:space="preserve">
     <value>关闭搜索</value>
@@ -293,23 +212,14 @@
   <data name="startScanButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="startScanButton.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 58</value>
-  </data>
-  <data name="startScanButton.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="startScanButton.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 29</value>
-  </data>
   <data name="startScanButton.Text" xml:space="preserve">
     <value>开始搜索</value>
   </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 15</value>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 118</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>1067, 562</value>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>连接传感器</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

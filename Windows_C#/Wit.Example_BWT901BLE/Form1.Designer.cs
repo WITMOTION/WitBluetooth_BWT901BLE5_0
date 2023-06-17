@@ -53,8 +53,8 @@ namespace Wit.Example_BWT901BLE
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.dataRichTextBox);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -65,14 +65,13 @@ namespace Wit.Example_BWT901BLE
             // 
             // leftPanel
             // 
-            resources.ApplyResources(this.leftPanel, "leftPanel");
             this.leftPanel.Controls.Add(this.groupBox3);
             this.leftPanel.Controls.Add(this.groupBox2);
+            resources.ApplyResources(this.leftPanel, "leftPanel");
             this.leftPanel.Name = "leftPanel";
             // 
             // groupBox3
             // 
-            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Controls.Add(this.bandWidth256);
             this.groupBox3.Controls.Add(this.bandWidth20);
             this.groupBox3.Controls.Add(this.returnRate50);
@@ -81,6 +80,7 @@ namespace Wit.Example_BWT901BLE
             this.groupBox3.Controls.Add(this.endFieldCalibrationButton);
             this.groupBox3.Controls.Add(this.startFieldCalibrationButton);
             this.groupBox3.Controls.Add(this.appliedCalibrationButton);
+            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.TabStop = false;
             // 
@@ -142,9 +142,9 @@ namespace Wit.Example_BWT901BLE
             // 
             // groupBox2
             // 
-            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.stopScanButton);
             this.groupBox2.Controls.Add(this.startScanButton);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 

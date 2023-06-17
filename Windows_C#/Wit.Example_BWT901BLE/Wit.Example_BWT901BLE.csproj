@@ -43,9 +43,11 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Wit.SDK, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>DII\Wit.SDK.dll</HintPath>
+    <Reference Include="Windows">
+      <HintPath>_DII\Windows.winmd</HintPath>
+    </Reference>
+    <Reference Include="Wit.SDK">
+      <HintPath>_DII\Wit.SDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +88,5 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="DII\Wit.SDK.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
