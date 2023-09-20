@@ -46,11 +46,15 @@
     <Reference Include="Windows">
       <HintPath>_DII\Windows.winmd</HintPath>
     </Reference>
-    <Reference Include="Wit.SDK">
-      <HintPath>_DII\Wit.SDK.dll</HintPath>
+    <Reference Include="Wit.OpenSDK">
+      <HintPath>_DII\Wit.OpenSDK.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ble5\BWT901BLE.cs" />
+    <Compile Include="ble5\Components\Bwt901bleProcessor.cs" />
+    <Compile Include="ble5\Components\Bwt901bleResolver.cs" />
+    <Compile Include="ble5\Data\WitSensorKey.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -87,6 +91,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="_DII\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

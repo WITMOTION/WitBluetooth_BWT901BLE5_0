@@ -1,27 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Wit.SDK.Modular.Sensor.Modular.DataProcessor.Constant;
 using Wit.SDK.Modular.WitSensorApi.Modular.BWT901BLE;
-using Windows.Devices.Bluetooth;
-using Wit.Bluetooth.WinBlue;
-using System.Security.Cryptography;
-using Wit.SDK.Modular.Sensor.Device.Utils;
-using Wit.SDK.Modular.Sensor.Device;
-using Wit.SDK.Modular.Sensor.Modular.Searcher.Config;
-using Wit.SDK.Sensor.Connector.Entity;
-using Wit.SDK.Sensor.Connector.Role;
+using Wit.SDK.Device.Device.Device.DKey;
+using Wit.Bluetooth.WinBlue.Utils;
+using Wit.Bluetooth.WinBlue.Interface;
 
 namespace Wit.Example_BWT901BLE
-{
+{   
     /// <summary>
     /// 程序主窗口
     /// 说明：
@@ -44,13 +35,13 @@ namespace Wit.Example_BWT901BLE
         /// 蓝牙管理器
         /// Bluetooth manager
         /// </summary>
-        private WinBlueManager WitBluetoothManager = WinBlueManager.GetInstance();
+        private IWinBlueManager WitBluetoothManager = WinBlueFactory.GetInstance();
 
         /// <summary>
         /// 找到的设备
         /// Found device
         /// </summary>
-        private Dictionary<string, BWT901BLE> FoundDeviceDict = new Dictionary<string, BWT901BLE>();
+        private Dictionary<string, Bwt901ble> FoundDeviceDict = new Dictionary<string, Bwt901ble>();
 
         /// <summary>
         /// 控制自动刷新数据线程是否工作
@@ -117,7 +108,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
                 bWT901BLE.Close();
             }
 
@@ -139,9 +130,7 @@ namespace Wit.Example_BWT901BLE
             {
                 if (!FoundDeviceDict.ContainsKey(mac))
                 {
-                    BWT901BLE bWT901BLE = new BWT901BLE();
-                    bWT901BLE.SetMacAddr(mac);
-                    bWT901BLE.SetDeviceName(deviceName);
+                    Bwt901ble bWT901BLE = new Bwt901ble(mac,deviceName);
                     FoundDeviceDict.Add(mac, bWT901BLE);
                     // 打开这个设备
                     // Open this device
@@ -156,7 +145,7 @@ namespace Wit.Example_BWT901BLE
         /// This will be called when the sensor data is refreshed, where you can record the data
         /// </summary>
         /// <param name="BWT901BLE"></param>
-        private void BWT901BLE_OnRecord(BWT901BLE BWT901BLE)
+        private void BWT901BLE_OnRecord(Bwt901ble BWT901BLE)
         {
             string text = GetDeviceData(BWT901BLE);
             Debug.WriteLine(text);
@@ -223,7 +212,7 @@ namespace Wit.Example_BWT901BLE
                 for (int i = 0; i < FoundDeviceDict.Count; i++)
                 {
                     var keyValue = FoundDeviceDict.ElementAt(i);
-                    BWT901BLE bWT901BLE = keyValue.Value;
+                    Bwt901ble bWT901BLE = keyValue.Value;
                     if (bWT901BLE.IsOpen())
                     {
                         DeviceData += GetDeviceData(bWT901BLE) + "\r\n";
@@ -240,7 +229,7 @@ namespace Wit.Example_BWT901BLE
         /// 获得设备的数据
         /// Obtaining device data
         /// </summary>
-        private string GetDeviceData(BWT901BLE BWT901BLE)
+        private string GetDeviceData(Bwt901ble BWT901BLE)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(BWT901BLE.GetDeviceName()).Append("\n");
@@ -283,7 +272,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -324,7 +313,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -345,7 +334,7 @@ namespace Wit.Example_BWT901BLE
 
                     // 拿到所有连接的蓝牙设备的值
                     // Get the values of all connected Bluetooth devices
-                    reg03Value += bWT901BLE.GetDeviceName() + "的寄存器03值为 :" + bWT901BLE.GetDeviceData("03") + "\r\n";
+                    reg03Value += bWT901BLE.GetDeviceName() + "的寄存器03值为 :" + bWT901BLE.GetDeviceData(new ShortKey("03")) + "\r\n";
                 }
                 catch (Exception ex)
                 {
@@ -366,7 +355,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -402,7 +391,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -438,7 +427,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -474,7 +463,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -512,7 +501,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {
@@ -552,7 +541,7 @@ namespace Wit.Example_BWT901BLE
             for (int i = 0; i < FoundDeviceDict.Count; i++)
             {
                 var keyValue = FoundDeviceDict.ElementAt(i);
-                BWT901BLE bWT901BLE = keyValue.Value;
+                Bwt901ble bWT901BLE = keyValue.Value;
 
                 if (bWT901BLE.IsOpen() == false)
                 {

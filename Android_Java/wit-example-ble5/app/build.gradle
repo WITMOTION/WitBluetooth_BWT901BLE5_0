@@ -27,7 +27,6 @@ android {
     }
 }
 
-
 dependencies {
     // 必须添加这两个依赖
     // Both dependencies must be added
