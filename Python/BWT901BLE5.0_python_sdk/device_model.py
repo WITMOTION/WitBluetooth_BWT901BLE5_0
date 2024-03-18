@@ -84,7 +84,6 @@ class DeviceModel:
             if self.writer_characteristic:
                 # 读取磁场四元数 Reading magnetic field quaternions
                 print("Reading magnetic field quaternions")
-                time.sleep(3)
                 asyncio.create_task(self.sendDataTh())
 
             if notify_characteristic:
@@ -110,6 +109,7 @@ class DeviceModel:
         print("The device is turned off")
 
     async def sendDataTh(self):
+        time.sleep(3)
         while self.isOpen:
             await self.readReg(0x3A)
             time.sleep(0.1)
