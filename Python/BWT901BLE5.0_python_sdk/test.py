@@ -9,13 +9,17 @@ devices = []
 # 扫描蓝牙设备并过滤名称 Scan Bluetooth devices and filter names
 async def scan():
     global devices
+    find = []
     print("Searching for Bluetooth devices......")
     try:
         devices = await bleak.BleakScanner.discover()
         print("Search ended")
         for d in devices:
             if d.name is not None and "WT" in d.name:
+                find.append(d)
                 print(d)
+        if len(find) == 0:
+            print("No devices found in this search!")
     except Exception as ex:
         print("Bluetooth search failed to start")
         print(ex)

@@ -1,4 +1,5 @@
 # coding:UTF-8
+import threading
 import time
 import struct
 import bleak
@@ -23,7 +24,7 @@ class DeviceModel:
     # endregion
 
     def __init__(self, deviceName, mac, callback_method):
-        print("初始化设备模型")
+        print("Initialize device model")
         # 设备名称（自定义） Device Name
         self.deviceName = deviceName
         self.mac = mac
@@ -80,6 +81,12 @@ class DeviceModel:
                     if notify_characteristic:
                         break
 
+            if self.writer_characteristic:
+                # 读取磁场四元数 Reading magnetic field quaternions
+                print("Reading magnetic field quaternions")
+                time.sleep(3)
+                asyncio.create_task(self.sendDataTh())
+
             if notify_characteristic:
                 print(f"Characteristic: {notify_characteristic}")
                 # 设置通知以接收数据 Set up notifications to receive data
@@ -102,40 +109,72 @@ class DeviceModel:
         self.isOpen = False
         print("The device is turned off")
 
+    async def sendDataTh(self):
+        while self.isOpen:
+            await self.readReg(0x3A)
+            time.sleep(0.1)
+            await self.readReg(0x51)
+            time.sleep(0.1)
+
     # region 数据解析 data analysis
     # 串口数据处理  Serial port data processing
     def onDataReceived(self, sender, data):
         tempdata = bytes.fromhex(data.hex())
         for var in tempdata:
             self.TempBytes.append(var)
-            if len(self.TempBytes) == 2 and (self.TempBytes[0] != 0x55 or self.TempBytes[1] != 0x61):
+            if len(self.TempBytes) == 1 and self.TempBytes[0] != 0x55:
+                del self.TempBytes[0]
+                continue
+            if len(self.TempBytes) == 2 and (self.TempBytes[1] != 0x61 and self.TempBytes[1] != 0x71):
                 del self.TempBytes[0]
                 continue
             if len(self.TempBytes) == 20:
-                self.processData(self.TempBytes[2:])
+                self.processData(self.TempBytes)
                 self.TempBytes.clear()
 
     # 数据解析 data analysis
     def processData(self, Bytes):
-        Ax = self.getSignInt16(Bytes[1] << 8 | Bytes[0]) / 32768 * 16
-        Ay = self.getSignInt16(Bytes[3] << 8 | Bytes[2]) / 32768 * 16
-        Az = self.getSignInt16(Bytes[5] << 8 | Bytes[4]) / 32768 * 16
-        Gx = self.getSignInt16(Bytes[7] << 8 | Bytes[6]) / 32768 * 2000
-        Gy = self.getSignInt16(Bytes[9] << 8 | Bytes[8]) / 32768 * 2000
-        Gz = self.getSignInt16(Bytes[11] << 8 | Bytes[10]) / 32768 * 2000
-        AngX = self.getSignInt16(Bytes[13] << 8 | Bytes[12]) / 32768 * 180
-        AngY = self.getSignInt16(Bytes[15] << 8 | Bytes[14]) / 32768 * 180
-        AngZ = self.getSignInt16(Bytes[17] << 8 | Bytes[16]) / 32768 * 180
-        self.set("AccX", round(Ax, 3))
-        self.set("AccY", round(Ay, 3))
-        self.set("AccZ", round(Az, 3))
-        self.set("AsX", round(Gx, 3))
-        self.set("AsY", round(Gy, 3))
-        self.set("AsZ", round(Gz, 3))
-        self.set("AngX", round(AngX, 3))
-        self.set("AngY", round(AngY, 3))
-        self.set("AngZ", round(AngZ, 3))
-        self.callback_method(self)
+        if Bytes[1] == 0x61:
+            Ax = self.getSignInt16(Bytes[3] << 8 | Bytes[2]) / 32768 * 16
+            Ay = self.getSignInt16(Bytes[5] << 8 | Bytes[4]) / 32768 * 16
+            Az = self.getSignInt16(Bytes[7] << 8 | Bytes[6]) / 32768 * 16
+            Gx = self.getSignInt16(Bytes[9] << 8 | Bytes[8]) / 32768 * 2000
+            Gy = self.getSignInt16(Bytes[11] << 8 | Bytes[10]) / 32768 * 2000
+            Gz = self.getSignInt16(Bytes[13] << 8 | Bytes[12]) / 32768 * 2000
+            AngX = self.getSignInt16(Bytes[15] << 8 | Bytes[14]) / 32768 * 180
+            AngY = self.getSignInt16(Bytes[17] << 8 | Bytes[16]) / 32768 * 180
+            AngZ = self.getSignInt16(Bytes[19] << 8 | Bytes[18]) / 32768 * 180
+            self.set("AccX", round(Ax, 3))
+            self.set("AccY", round(Ay, 3))
+            self.set("AccZ", round(Az, 3))
+            self.set("AsX", round(Gx, 3))
+            self.set("AsY", round(Gy, 3))
+            self.set("AsZ", round(Gz, 3))
+            self.set("AngX", round(AngX, 3))
+            self.set("AngY", round(AngY, 3))
+            self.set("AngZ", round(AngZ, 3))
+            self.callback_method(self)
+        else:
+            # 磁场 magnetic field
+            if Bytes[2] == 0x3A:
+                Hx = self.getSignInt16(Bytes[5] << 8 | Bytes[4]) / 120
+                Hy = self.getSignInt16(Bytes[7] << 8 | Bytes[6]) / 120
+                Hz = self.getSignInt16(Bytes[9] << 8 | Bytes[8]) / 120
+                self.set("HX", round(Hx, 3))
+                self.set("HY", round(Hy, 3))
+                self.set("HZ", round(Hz, 3))
+            # 四元数 Quaternion
+            elif Bytes[2] == 0x51:
+                Q0 = self.getSignInt16(Bytes[5] << 8 | Bytes[4]) / 32768
+                Q1 = self.getSignInt16(Bytes[7] << 8 | Bytes[6]) / 32768
+                Q2 = self.getSignInt16(Bytes[9] << 8 | Bytes[8]) / 32768
+                Q3 = self.getSignInt16(Bytes[11] << 8 | Bytes[10]) / 32768
+                self.set("Q0", round(Q0, 5))
+                self.set("Q1", round(Q1, 5))
+                self.set("Q2", round(Q2, 5))
+                self.set("Q3", round(Q3, 5))
+            else:
+                pass
 
     # 获得int16有符号数 Obtain int16 signed number
     @staticmethod
@@ -147,26 +186,26 @@ class DeviceModel:
     # endregion
 
     # 发送串口数据 Sending serial port data
-    def sendData(self, data):
+    async def sendData(self, data):
         try:
-            if self.client is not None and self.writer_characteristic is not None:
-                self.client.write_value(self.writer_characteristic.uuid, data)
+            if self.client.is_connected and self.writer_characteristic is not None:
+                await self.client.write_gatt_char(self.writer_characteristic.uuid, bytes(data))
         except Exception as ex:
             print(ex)
 
     # 读取寄存器 read register
-    def readReg(self, regAddr):
+    async def readReg(self, regAddr):
         # 封装读取指令并向串口发送数据 Encapsulate read instructions and send data to the serial port
-        self.sendData(self.get_readBytes(regAddr))
+        await self.sendData(self.get_readBytes(regAddr))
 
     # 写入寄存器 Write Register
-    def writeReg(self, regAddr, sValue):
+    async def writeReg(self, regAddr, sValue):
         # 解锁 unlock
         self.unlock()
         # 延迟100ms Delay 100ms
         time.sleep(0.1)
         # 封装写入指令并向串口发送数据
-        self.sendData(self.get_writeBytes(regAddr, sValue))
+        await self.sendData(self.get_writeBytes(regAddr, sValue))
         # 延迟100ms Delay 100ms
         time.sleep(0.1)
         # 保存 save
