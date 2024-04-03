@@ -1,12 +1,11 @@
 package com.wit.example.ble5;
 
+import com.inuker.bluetooth.library.connect.listener.BleConnectStatusListener;
 import com.wit.example.ble5.components.Bwt901bleProcessor;
 import com.wit.example.ble5.components.Bwt901bleResolver;
+import com.wit.example.ble5.interfaces.IBluetoothConnectStatusObserver;
 import com.wit.example.ble5.interfaces.IBwt901bleRecordObserver;
 import com.wit.witsdk.api.interfaces.IAttitudeSensorApi;
-import com.wit.witsdk.sensor.dkey.DoubleKey;
-import com.wit.witsdk.sensor.dkey.ShortKey;
-import com.wit.witsdk.sensor.dkey.StringKey;
 import com.wit.witsdk.sensor.modular.connector.enums.ConnectType;
 import com.wit.witsdk.sensor.modular.connector.modular.bluetooth.BluetoothBLE;
 import com.wit.witsdk.sensor.modular.connector.roles.WitCoreConnect;
@@ -24,7 +23,7 @@ import java.util.List;
  * @author huangyajun
  * @date 2022/6/28 20:50
  */
-public class Bwt901ble implements IListenKeyUpdateObserver, IAttitudeSensorApi {
+public class Bwt901ble extends BleConnectStatusListener implements IListenKeyUpdateObserver, IAttitudeSensorApi {
 
     /**
      * 设备模型
@@ -40,6 +39,7 @@ public class Bwt901ble implements IListenKeyUpdateObserver, IAttitudeSensorApi {
      * 监控数据的人
      */
     private List<IBwt901bleRecordObserver> recordObservers = new ArrayList<>();
+    private List<IBluetoothConnectStatusObserver> statusObservers = new ArrayList<>();
 
     /**
      * 构造方法
@@ -216,36 +216,6 @@ public class Bwt901ble implements IListenKeyUpdateObserver, IAttitudeSensorApi {
     }
 
     /**
-     * 获得设备数据
-     *
-     * @author huangyajun
-     * @date 2022/6/28 21:07
-     */
-    public Short getDeviceData(ShortKey key) {
-        return deviceModel.getDeviceData(key);
-    }
-
-    /**
-     * 获得设备数据
-     *
-     * @author huangyajun
-     * @date 2022/6/28 21:07
-     */
-    public String getDeviceData(StringKey key) {
-        return deviceModel.getDeviceData(key);
-    }
-
-    /**
-     * 获得设备数据
-     *
-     * @author huangyajun
-     * @date 2022/6/28 21:07
-     */
-    public Double getDeviceData(DoubleKey key) {
-        return deviceModel.getDeviceData(key);
-    }
-
-    /**
      * 注册数据记录
      *
      * @author huangyajun
@@ -267,6 +237,27 @@ public class Bwt901ble implements IListenKeyUpdateObserver, IAttitudeSensorApi {
 
         if (!recordObservers.isEmpty()) {
             recordObservers.remove(record);
+        }
+    }
+
+    // 注册状态监听
+    public void registerStatusObserver(IBluetoothConnectStatusObserver observer) {
+        // 注册连接状态监听
+        bluetoothBLE.registerConnectStatusListener(bluetoothBLE.getMac(), this);
+        statusObservers.add(observer);
+    }
+
+    /**
+     * 移除数据记录监听
+     *
+     * @author huangyajun
+     * @date 2022/6/28 21:02
+     */
+    public void removeStatusObserver(IBluetoothConnectStatusObserver observer) {
+        bluetoothBLE.unregisterConnectStatusListener(bluetoothBLE.getMac(), this);
+
+        if (!statusObservers.isEmpty()) {
+            statusObservers.remove(observer);
         }
     }
 
@@ -292,6 +283,15 @@ public class Bwt901ble implements IListenKeyUpdateObserver, IAttitudeSensorApi {
         for (int i = 0; i < recordObservers.size(); i++) {
             IBwt901bleRecordObserver iBwt901bleRecordObserver = recordObservers.get(i);
             iBwt901bleRecordObserver.onRecord(this);
+        }
+    }
+
+    // 蓝牙状态改变
+    @Override
+    public void onConnectStatusChanged(String mac, int status) {
+        for (int i = 0; i < statusObservers.size(); i++) {
+            IBluetoothConnectStatusObserver observer = statusObservers.get(i);
+            observer.onStatusChanged(status);
         }
     }
 }

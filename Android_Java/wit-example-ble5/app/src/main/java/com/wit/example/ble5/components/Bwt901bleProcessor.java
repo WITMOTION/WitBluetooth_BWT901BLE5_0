@@ -2,13 +2,11 @@ package com.wit.example.ble5.components;
 
 import android.util.Log;
 
-import com.wit.example.ble5.data.WitSensorKey;
-import com.wit.witsdk.sensor.dkey.ShortKey;
-import com.wit.witsdk.sensor.dkey.StringKey;
 import com.wit.witsdk.sensor.modular.connector.entity.BluetoothBLEOption;
 import com.wit.witsdk.sensor.modular.connector.modular.bluetooth.WitBluetoothManager;
 import com.wit.witsdk.sensor.modular.connector.roles.WitCoreConnect;
 import com.wit.witsdk.sensor.modular.device.DeviceModel;
+import com.wit.example.ble5.data.WitSensorKey;
 import com.wit.witsdk.sensor.modular.processor.interfaces.IDataProcessor;
 import com.wit.witsdk.sensor.utils.DipSensorMagHelper;
 import com.wit.witsdk.utils.BitConvert;
@@ -94,13 +92,15 @@ public class Bwt901bleProcessor implements IDataProcessor {
                 if (count++ % 50 == 0 || count < 5) {
                     sendProtocolData(deviceModel, new byte[]{(byte) 0xff, (byte) 0xaa, (byte) 0x27, (byte) 0x64, (byte) 0x00}, 150);// 电量
                     sendProtocolData(deviceModel, new byte[]{(byte) 0xff, (byte) 0xaa, (byte) 0x27, (byte) 0x40, (byte) 0x00}, 150);// 温度
+
+
                 }
 
                 // 读取信号
                 if (count % 5 == 0) {
                     WitCoreConnect coreConnect = deviceModel.getCoreConnect();
                     BluetoothBLEOption bluetoothBLEOption = coreConnect.getConfig().getBluetoothBLEOption();
-                    deviceModel.setDeviceData(WitSensorKey.Rssi, Float.valueOf(WitBluetoothManager.getRssi(bluetoothBLEOption.getMac())));
+                    deviceModel.setDeviceData(WitSensorKey.Rssi, WitBluetoothManager.getRssi(bluetoothBLEOption.getMac()) + "");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -130,26 +130,26 @@ public class Bwt901bleProcessor implements IDataProcessor {
     @Override
     public void OnUpdate(DeviceModel deviceModel) {
         // 加速度
-        Short regAx = deviceModel.getDeviceData(new ShortKey("61_0"));
-        Short regAy = deviceModel.getDeviceData(new ShortKey("61_1"));
-        Short regAz = deviceModel.getDeviceData(new ShortKey("61_2"));
+        String regAx = deviceModel.getDeviceData("61_0");
+        String regAy = deviceModel.getDeviceData("61_1");
+        String regAz = deviceModel.getDeviceData("61_2");
         // 角速度
-        Short regWx = deviceModel.getDeviceData(new ShortKey("61_3"));
-        Short regWy = deviceModel.getDeviceData(new ShortKey("61_4"));
-        Short regWz = deviceModel.getDeviceData(new ShortKey("61_5"));
+        String regWx = deviceModel.getDeviceData("61_3");
+        String regWy = deviceModel.getDeviceData("61_4");
+        String regWz = deviceModel.getDeviceData("61_5");
         // 角度
-        Short regAngleX = deviceModel.getDeviceData(new ShortKey("61_6"));
-        Short regAngleY = deviceModel.getDeviceData(new ShortKey("61_7"));
-        Short regAngleZ = deviceModel.getDeviceData(new ShortKey("61_8"));
+        String regAngleX = deviceModel.getDeviceData("61_6");
+        String regAngleY = deviceModel.getDeviceData("61_7");
+        String regAngleZ = deviceModel.getDeviceData("61_8");
 
         // 四元数
-        Short regQ1 = deviceModel.getDeviceData(new ShortKey("51"));
-        Short regQ2 = deviceModel.getDeviceData(new ShortKey("52"));
-        Short regQ3 = deviceModel.getDeviceData(new ShortKey("53"));
-        Short regQ4 = deviceModel.getDeviceData(new ShortKey("54"));
+        String regQ1 = deviceModel.getDeviceData("51");
+        String regQ2 = deviceModel.getDeviceData("52");
+        String regQ3 = deviceModel.getDeviceData("53");
+        String regQ4 = deviceModel.getDeviceData("54");
         // 温度和电量
-        Short regTemperature = deviceModel.getDeviceData(new ShortKey("40"));
-        Short regPower = deviceModel.getDeviceData(new ShortKey("64"));
+        String regTemperature = deviceModel.getDeviceData("40");
+        String regPower = deviceModel.getDeviceData("64");
 
 
         // 版本号
@@ -191,80 +191,86 @@ public class Bwt901bleProcessor implements IDataProcessor {
         }
 
         // 加速度解算
-        if (regAx != null) {
-            deviceModel.setDeviceData(WitSensorKey.AccX, round(regAx / 32768.0 * 16, 3));
+        if (!StringUtils.IsNullOrEmpty(regAx)) {
+            deviceModel.setDeviceData(WitSensorKey.AccX, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAx) / 32768 * 16) + "");
         }
-        if (regAy != null) {
-            deviceModel.setDeviceData(WitSensorKey.AccY, round(regAy / 32768.0 * 16, 3));
+        if (!StringUtils.IsNullOrEmpty(regAy)) {
+            deviceModel.setDeviceData(WitSensorKey.AccY, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAy) / 32768 * 16));
         }
-        if (regAz != null) {
-            deviceModel.setDeviceData(WitSensorKey.AccZ, round(regAz / 32768.0 * 16, 3));
+        if (!StringUtils.IsNullOrEmpty(regAz)) {
+            deviceModel.setDeviceData(WitSensorKey.AccZ, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAz) / 32768 * 16));
         }
 
         // 角速度解算
-        if (regWx != null) {
-            deviceModel.setDeviceData(WitSensorKey.AsX, round(regWx / 32768.0 * 2000, 3));
+        if (!StringUtils.IsNullOrEmpty(regWx)) {
+            deviceModel.setDeviceData(WitSensorKey.AsX, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regWx) / 32768 * 2000));
         }
-        if (regWy != null) {
-            deviceModel.setDeviceData(WitSensorKey.AsY, round(regWy / 32768.0 * 2000, 3));
+        if (!StringUtils.IsNullOrEmpty(regWy)) {
+            deviceModel.setDeviceData(WitSensorKey.AsY, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regWy) / 32768 * 2000));
         }
-        if (regWz != null) {
-            deviceModel.setDeviceData(WitSensorKey.AsZ, round(regWz / 32768.0 * 2000, 3));
+        if (!StringUtils.IsNullOrEmpty(regWz)) {
+            deviceModel.setDeviceData(WitSensorKey.AsZ, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regWz) / 32768 * 2000));
         }
 
         // 角度
-        if (regAngleX != null) {
-            deviceModel.setDeviceData(WitSensorKey.AngleX, round(regAngleX / 32768.0 * 180, 3));
+        if (!StringUtils.IsNullOrEmpty(regAngleX)) {
+            deviceModel.setDeviceData(WitSensorKey.AngleX, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAngleX) / 32768 * 180));
         }
-        if (regAngleY != null) {
-            deviceModel.setDeviceData(WitSensorKey.AngleY, round(regAngleY / 32768.0 * 180, 3));
+        if (!StringUtils.IsNullOrEmpty(regAngleY)) {
+            deviceModel.setDeviceData(WitSensorKey.AngleY, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAngleY) / 32768 * 180));
         }
-        if (regAngleZ != null) {
-            deviceModel.setDeviceData(WitSensorKey.AngleZ, round(regAngleZ / 32768.0 * 180, 3));
+        if (!StringUtils.IsNullOrEmpty(regAngleZ)) {
+            String anZ = NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regAngleZ) / 32768 * 180);
+            deviceModel.setDeviceData(WitSensorKey.AngleZ, anZ);
         }
 
         // 磁场
-        Short regHX = deviceModel.getDeviceData(new ShortKey("3A"));
-        Short regHY = deviceModel.getDeviceData(new ShortKey("3B"));
-        Short regHZ = deviceModel.getDeviceData(new ShortKey("3C"));
+        String regHX = deviceModel.getDeviceData("3A");
+        String regHY = deviceModel.getDeviceData("3B");
+        String regHZ = deviceModel.getDeviceData("3C");
         // 磁场类型
-        Short magType = deviceModel.getDeviceData(new ShortKey("72"));
-        if (regHX != null &&
-                regHY != null &&
-                regHZ != null &&
-                magType != null
+        String magType = deviceModel.getDeviceData("72");
+        if (!StringUtils.IsNullOrEmpty(regHX) &&
+                !StringUtils.IsNullOrEmpty(regHY) &&
+                !StringUtils.IsNullOrEmpty(regHZ) &&
+                !StringUtils.IsNullOrEmpty(magType)
         ) {
+            short type = Short.parseShort(magType);
             // 解算数据,并且保存到设备数据里
-            deviceModel.setDeviceData(WitSensorKey.HX, DipSensorMagHelper.GetMagToUt(magType, regHX));
-            deviceModel.setDeviceData(WitSensorKey.HY, DipSensorMagHelper.GetMagToUt(magType, regHY));
-            deviceModel.setDeviceData(WitSensorKey.HZ, DipSensorMagHelper.GetMagToUt(magType, regHZ));
+            deviceModel.setDeviceData(WitSensorKey.HX, DipSensorMagHelper.GetMagToUt(type, Double.parseDouble(regHX)) + "");
+            deviceModel.setDeviceData(WitSensorKey.HY, DipSensorMagHelper.GetMagToUt(type, Double.parseDouble(regHY)) + "");
+            deviceModel.setDeviceData(WitSensorKey.HZ, DipSensorMagHelper.GetMagToUt(type, Double.parseDouble(regHZ)) + "");
         }
 
+
         // 温度
-        if (regTemperature != null) {
-            deviceModel.setDeviceData(WitSensorKey.T, round(regTemperature / 100.0, 3));
+        if (!StringUtils.IsNullOrEmpty(regTemperature)) {
+            deviceModel.setDeviceData(WitSensorKey.T, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regTemperature) / 100));
         }
 
         // 电量
-        if (regPower != null) {
-            float eqPercent = getEqPercent((float) (regPower / 100.0));
-            deviceModel.setDeviceData(WitSensorKey.ElectricQuantityPercentage, eqPercent);
+        if (!StringUtils.IsNullOrEmpty(regPower)) {
+
+            int regPowerValue = Integer.parseInt(regPower);
+
+            float eqPercent = getEqPercent((float) (regPowerValue / 100.0));
+            deviceModel.setDeviceData(WitSensorKey.ElectricQuantityPercentage, eqPercent + "");
             // 电量原始值
-            deviceModel.setDeviceData(WitSensorKey.ElectricQuantity, regPower / 100.0f);
+            deviceModel.setDeviceData(WitSensorKey.ElectricQuantity, regPowerValue + "");
         }
 
         // 四元数
-        if (regQ1 != null) {
-            deviceModel.setDeviceData(WitSensorKey.Q0, round(regQ1 / 32768.0, 3));
+        if (!StringUtils.IsNullOrEmpty(regQ1)) {
+            deviceModel.setDeviceData(WitSensorKey.Q0, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regQ1) / 32768.0));
         }
-        if (regQ2 != null) {
-            deviceModel.setDeviceData(WitSensorKey.Q1, round(regQ2 / 32768.0, 3));
+        if (!StringUtils.IsNullOrEmpty(regQ2)) {
+            deviceModel.setDeviceData(WitSensorKey.Q1, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regQ2) / 32768.0));
         }
-        if (regQ3 != null) {
-            deviceModel.setDeviceData(WitSensorKey.Q2, round(regQ3 / 32768.0, 5));
+        if (!StringUtils.IsNullOrEmpty(regQ3)) {
+            deviceModel.setDeviceData(WitSensorKey.Q2, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regQ3) / 32768.0));
         }
-        if (regQ4 != null) {
-            deviceModel.setDeviceData(WitSensorKey.Q3, round(regQ4 / 32768.0, 5));
+        if (!StringUtils.IsNullOrEmpty(regQ4)) {
+            deviceModel.setDeviceData(WitSensorKey.Q3, NumberFormat.formatDoubleToString("%.3f", Double.parseDouble(regQ4) / 32768.0));
         }
     }
 
@@ -288,9 +294,6 @@ public class Bwt901bleProcessor implements IDataProcessor {
         return p;
     }
 
-    /**
-     * 电量计算
-     */
     public float Interp(float a, float[] x, float[] y) {
         float v = 0;
         int L = x.length;
@@ -306,16 +309,8 @@ public class Bwt901bleProcessor implements IDataProcessor {
         return v;
     }
 
-    /**
-     * 保留小数
-     */
-    public double round(double value, int b) {
-        double q = Math.pow(10, b);
-        if (b == 0) {
-            Math.round(value * q);
-        }
-        long round = Math.round(value * q);
-        double v = round / q;
-        return v;
+    private void ReadMagType(DeviceModel deviceModel) {
+        // 读取72磁场类型寄存器,后面解析磁场的时候要用到
+        deviceModel.sendProtocolData(new byte[]{(byte) 0xff, (byte) 0xaa, 0x27, 0x72, 0x00});
     }
 }

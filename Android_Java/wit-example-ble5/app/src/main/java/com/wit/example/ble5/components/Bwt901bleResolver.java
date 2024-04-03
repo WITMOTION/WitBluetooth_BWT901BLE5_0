@@ -1,6 +1,5 @@
 package com.wit.example.ble5.components;
 
-import com.wit.witsdk.sensor.dkey.ShortKey;
 import com.wit.witsdk.sensor.modular.device.DeviceModel;
 import com.wit.witsdk.sensor.modular.resolver.entity.SendDataResult;
 import com.wit.witsdk.sensor.modular.resolver.interfaces.IProtocolResolver;
@@ -16,7 +15,7 @@ import java.util.List;
  * 蓝牙5.0传感器协议解析器
  *
  * @Author haungyajun
- * @Date 2022/4/26 15:26
+ * @Date 2022/4/26 15:26 （可以根据需要修改）
  */
 public class Bwt901bleResolver implements IProtocolResolver {
 
@@ -58,9 +57,10 @@ public class Bwt901bleResolver implements IProtocolResolver {
 
                             for (int i = 0; i < 4; i++) {
                                 Pack[i] = BitConvert.byte2short(new byte[]{returnData[5 + (i * 2)], returnData[4 + (i * 2)]});
+
                                 String reg = Integer.toHexString(readReg + i).toUpperCase();
                                 reg = StringUtils.padLeft(reg, 2, '0');
-                                deviceModel.setDeviceData(new ShortKey(reg), Pack[i]);
+                                deviceModel.setDeviceData(reg, Pack[i] + "");
                             }
                         }
                     }
@@ -150,7 +150,7 @@ public class Bwt901bleResolver implements IProtocolResolver {
                     fData[i] = (((short) activeByteTemp.get(iStart + i * 2 + 3)) << 8) | ((short) activeByteTemp.get(iStart + i * 2 + 2) & 0xff);
                     String Identify = Integer.toHexString(activeByteTemp.get(1));
                     Identify = StringUtils.padLeft(Identify, 2, '0');
-                    deviceModel.setDeviceData(new ShortKey(Identify + "_" + i), (short) fData[i]);
+                    deviceModel.setDeviceData(Identify + "_" + i, (fData[i]) + "");
                 }
             }
         }

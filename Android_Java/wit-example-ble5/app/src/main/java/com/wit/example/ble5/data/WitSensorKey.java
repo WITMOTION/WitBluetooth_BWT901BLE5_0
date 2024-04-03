@@ -1,8 +1,5 @@
 package com.wit.example.ble5.data;
 
-import com.wit.witsdk.sensor.dkey.DoubleKey;
-import com.wit.witsdk.sensor.dkey.StringKey;
-
 /**
  * 传感器标准key常量
  *
@@ -11,29 +8,43 @@ import com.wit.witsdk.sensor.dkey.StringKey;
  */
 public class WitSensorKey {
 
-    public static final StringKey ChipTime = new StringKey("ChipTime", "片上时间", "");
-    public static final DoubleKey AccX = new DoubleKey("AccX", "加速度X", "g");
-    public static final DoubleKey AccY = new DoubleKey("AccY", "加速度Y", "g");
-    public static final DoubleKey AccZ = new DoubleKey("AccZ", "加速度Z", "g");
-    public static final DoubleKey AsX = new DoubleKey("AsX", "加速度X", "°/s");
-    public static final DoubleKey AsY = new DoubleKey("AsY", "加速度Y", "°/s");
-    public static final DoubleKey AsZ = new DoubleKey("AsZ", "加速度Z", "°/s");
-    public static final DoubleKey AngleX = new DoubleKey("AngleX", "加速度Z", "°");
-    public static final DoubleKey AngleY = new DoubleKey("AngleY", "加速度Z", "°");
-    public static final DoubleKey AngleZ = new DoubleKey("AngleZ", "加速度Z", "°");
-    public static final DoubleKey HX = new DoubleKey("HX", "磁场X", "μT");
-    public static final DoubleKey HY = new DoubleKey("HY", "磁场Y", "μT");
-    public static final DoubleKey HZ = new DoubleKey("HZ", "磁场Z", "μT");
-    public static final DoubleKey T = new DoubleKey("T", "温度", "℃");
-
-    public static final DoubleKey Q0 = new DoubleKey("Q0", "四元数0", "");
-    public static final DoubleKey Q1 = new DoubleKey("Q1", "四元数1", "");
-    public static final DoubleKey Q2 = new DoubleKey("Q2", "四元数2", "");
-    public static final DoubleKey Q3 = new DoubleKey("Q3", "四元数3", "");
-
-    public static final DoubleKey Rssi = new DoubleKey("Rssi", "信号", "");
-    public static final DoubleKey ElectricQuantityPercentage = new DoubleKey("ElectricQuantityPercentage", "电量", "%");
-    public static final DoubleKey ElectricQuantity = new DoubleKey("ElectricQuantity", "电量(电压)", "V");
-    public static final StringKey VersionNumber = new StringKey("VersionNumber", "版本号", "");
-
+    public static final String ChipTime = "ChipTime";
+    public static final String AccX = "AccX";
+    public static final String AccY = "AccY";
+    public static final String AccZ = "AccZ";
+    public static final String AsX = "AsX";
+    public static final String AsY = "AsY";
+    public static final String AsZ = "AsZ";
+    public static final String AngleX = "AngleX";
+    public static final String AngleY = "AngleY";
+    public static final String AngleZ = "AngleZ";
+    public static final String HX = "HX";
+    public static final String HY = "HY";
+    public static final String HZ = "HZ";
+    public static final String T = "T";
+    public static final String D0 = "D0";
+    public static final String D1 = "D1";
+    public static final String D2 = "D2";
+    public static final String D3 = "D3";
+    public static final String P = "P";
+    public static final String H = "H";
+    public static final String Lon = "Lon";
+    public static final String LonDeg = "LonDeg";
+    public static final String Lat = "Lat";
+    public static final String LatDeg = "LatDeg";
+    public static final String GPSHeight = "GPSHeight";
+    public static final String GPSYaw = "GPSYaw";
+    public static final String GPSV = "GPSV";
+    public static final String Q0 = "Q0";
+    public static final String Q1 = "Q1";
+    public static final String Q2 = "Q2";
+    public static final String Q3 = "Q3";
+    public static final String SN = "SN";
+    public static final String PDOP = "PDOP";
+    public static final String HDOP = "HDOP";
+    public static final String VDOP = "VDOP";
+    public static final String Rssi = "Rssi";
+    public static final String ElectricQuantityPercentage = "ElectricQuantityPercentage";
+    public static final String ElectricQuantity = "ElectricQuantity";
+    public static final String VersionNumber = "VersionNumber";
 }
