@@ -117,14 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="dataRichTextBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>569, 436</value>
+  </data>
+  <data name="groupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>575, 456</value>
+  </data>
   <data name="groupBox1.Text" xml:space="preserve">
     <value>传感器数据</value>
+  </data>
+  <data name="leftPanel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>232, 456</value>
+  </data>
+  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 118</value>
+  </data>
+  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 338</value>
+  </data>
+  <data name="groupBox3.Text" xml:space="preserve">
+    <value>控制传感器</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="bandWidth256.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="bandWidth256.Location" type="System.Drawing.Point, System.Drawing">
     <value>13, 194</value>
   </data>
@@ -194,14 +212,11 @@
   <data name="appliedCalibrationButton.Text" xml:space="preserve">
     <value>加计校准</value>
   </data>
-  <data name="groupBox3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 118</value>
+  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 118</value>
   </data>
-  <data name="groupBox3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 332</value>
-  </data>
-  <data name="groupBox3.Text" xml:space="preserve">
-    <value>控制传感器</value>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>连接传感器</value>
   </data>
   <data name="stopScanButton.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
@@ -215,11 +230,8 @@
   <data name="startScanButton.Text" xml:space="preserve">
     <value>开始搜索</value>
   </data>
-  <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 118</value>
-  </data>
-  <data name="groupBox2.Text" xml:space="preserve">
-    <value>连接传感器</value>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>807, 456</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

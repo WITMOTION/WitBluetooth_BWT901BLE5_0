@@ -57,7 +57,7 @@ namespace Wit.SDK.Modular.Sensor.Modular.DataProcessor.Roles
             th.Start();
         }
 
-        public override void OnClose()
+        public override void OnClose(DeviceModel deviceModel)
         {
             ReadDataThreadRuning = false;
             // 关闭key值切换器

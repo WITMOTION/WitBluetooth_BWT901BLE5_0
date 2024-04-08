@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4D4AF02B-A74A-4638-AEBD-F2DBD1215BE1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Wit.Example_WTVB01BT50</RootNamespace>
+    <AssemblyName>Wit.Example_WTVB01BT50</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Windows, Version=255.255.255.255, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>_DII\Windows.winmd</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VB01\Components\Wtvb01Processor.cs" />
+    <Compile Include="VB01\Components\Wtvb01Resolver.cs" />
+    <Compile Include="VB01\Data\WtVB01SensorKey.cs" />
+    <Compile Include="VB01\WTVB01.cs" />
+    <Compile Include="WitSdk\Device\Connector\Entity\SerialPortConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Entity\TcpClientConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Entity\TcpServerConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Entity\UdpConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Entity\WinBleConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Interface\ConnectConfig.cs" />
+    <Compile Include="WitSdk\Device\Connector\Interface\IConnector.cs" />
+    <Compile Include="WitSdk\Device\Connector\Interface\IReceiveListener.cs" />
+    <Compile Include="WitSdk\Device\Connector\Interface\SendDataInterface.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Tcp\TcpServer.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Tcp\TcpServerPool.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Tcp\TcpServerProxy.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Udp\UdpServer.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Udp\UdpServerPool.cs" />
+    <Compile Include="WitSdk\Device\Connector\Modular\Udp\UdpServerProxy.cs" />
+    <Compile Include="WitSdk\Device\Connector\Role\SPConnector.cs" />
+    <Compile Include="WitSdk\Device\Connector\Role\TcpClientConnector.cs" />
+    <Compile Include="WitSdk\Device\Connector\Role\TcpServerConnector.cs" />
+    <Compile Include="WitSdk\Device\Connector\Role\UdpConnector.cs" />
+    <Compile Include="WitSdk\Device\Connector\Role\WinBleConnector.cs" />
+    <Compile Include="WitSdk\Device\Device\Constant\InnerKeys.cs" />
+    <Compile Include="WitSdk\Device\Device\Context\DeviceManager.cs" />
+    <Compile Include="WitSdk\Device\Device\Context\DeviceManagerEvents.cs" />
+    <Compile Include="WitSdk\Device\Device\Context\ReadDataSleepManager.cs" />
+    <Compile Include="WitSdk\Device\Device\DeviceDataSource.cs" />
+    <Compile Include="WitSdk\Device\Device\DeviceEvents.cs" />
+    <Compile Include="WitSdk\Device\Device\DeviceModel.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\ByteKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\DataKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\DoubleKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\FloatKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\IntKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\ShortKey.cs" />
+    <Compile Include="WitSdk\Device\Device\DKey\StringKey.cs" />
+    <Compile Include="WitSdk\Device\Device\Entity\DeviceOption.cs" />
+    <Compile Include="WitSdk\Device\Device\Enum\DataType.cs" />
+    <Compile Include="WitSdk\Device\Device\Interfaces\IDeviceComponent.cs" />
+    <Compile Include="WitSdk\Device\Device\Interfaces\Impls\RateCalculationCompo.cs" />
+    <Compile Include="WitSdk\Device\Device\Utils\DeviceModelFactory.cs" />
+    <Compile Include="WitSdk\Device\Processor\Interface\IDataProcessor.cs" />
+    <Compile Include="WitSdk\Device\Processor\Interface\Impls\EmptyProcessor.cs" />
+    <Compile Include="WitSdk\Device\Resolver\Enum\WitSensorProtocol.cs" />
+    <Compile Include="WitSdk\Device\Resolver\Interface\Impls\EmptyResolver.cs" />
+    <Compile Include="WitSdk\Device\Resolver\Interface\IProtocolResolver.cs" />
+    <Compile Include="WitSdk\Example\IAttitudeSenosrApi.cs" />
+    <Compile Include="WitSdk\Tools\Byte\ByteArrayConvert.cs" />
+    <Compile Include="WitSdk\Tools\Cmd\Entity\CmdBean.cs" />
+    <Compile Include="WitSdk\Tools\Cmd\Utils\CmdUtils.cs" />
+    <Compile Include="WitSdk\Tools\DateTime\DateTimeUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\AutoDelayUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\DataProcessorContext.cs" />
+    <Compile Include="WitSdk\Tools\Device\RecordKeySwitch.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\AsciiProtocolUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\ATCommandHelper.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\DipSensorMagHelper.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\Modbus16Utils.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\MWT925Helper.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\SerialPortUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\WitCanProtocolUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\WitProtocolUtils.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\WitSensorHelper.cs" />
+    <Compile Include="WitSdk\Tools\Device\Utils\WT925Helper.cs" />
+    <Compile Include="WitSdk\Tools\Gps\GpsUtils.cs" />
+    <Compile Include="WitSdk\WinBlue\EmptyManager.cs" />
+    <Compile Include="WitSdk\WinBlue\Entity\WinBleOption.cs" />
+    <Compile Include="WitSdk\WinBlue\Enums\BluetoothEvent.cs" />
+    <Compile Include="WitSdk\WinBlue\Interface\WinBlueManager.cs" />
+    <Compile Include="WitSdk\WinBlue\Utils\MacUtils.cs" />
+    <Compile Include="WitSdk\WinBlue\Utils\WinBlueFactory.cs" />
+    <Compile Include="WitSdk\WinBlue\WinBlueClient.cs" />
+    <Compile Include="WitSdk\WinBlue\WinBlueFinder.cs" />
+    <Compile Include="WitSdk\WinBlue\WinBlueManagerImpl.cs" />
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.zh-CN.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <None Include="_DII\Windows.winmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
