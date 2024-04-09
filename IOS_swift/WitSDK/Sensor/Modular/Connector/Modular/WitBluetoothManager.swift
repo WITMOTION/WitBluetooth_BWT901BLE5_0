@@ -130,6 +130,12 @@ extension WitBluetoothManager{
         }
     }
     
+    // MARK: 通知蓝牙事件观察者，低功耗蓝牙连接断开
+    func notifyObserverOnDisconnected(_ bluetoothBLE: BluetoothBLE?){
+        for item in self.observerList{
+            item.onDisconnected(bluetoothBLE: bluetoothBLE)
+        }
+    }
 }
 
 
@@ -194,7 +200,7 @@ extension WitBluetoothManager : CBCentralManagerDelegate{
         let ble = self.bluetoothBLEDist?[peripheral.identifier.uuidString]
         if(ble != nil){
             //ble?.onConnected()
-            //notifyObserverOnConnected(ble)
+            notifyObserverOnConnected(ble)
         }
     }
     
@@ -212,7 +218,10 @@ extension WitBluetoothManager : CBCentralManagerDelegate{
         NotificationCenter.default.post(name: Notification.Name(rawValue: "DidDisConnectPeriphernalNotification"), object: nil, userInfo: ["deviceList": self.deviceList as AnyObject])
         
         // 这里可以发通知出去告诉设备连接界面连接丢失
-        
+        let ble = self.bluetoothBLEDist?[peripheral.identifier.uuidString]
+        if(ble != nil){
+            notifyObserverOnDisconnected(ble)
+        }
     }
     
 }
