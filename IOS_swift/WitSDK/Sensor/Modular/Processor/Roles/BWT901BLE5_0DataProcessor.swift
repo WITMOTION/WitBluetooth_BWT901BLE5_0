@@ -106,12 +106,12 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
             let reg2eValue:Int16 = Int16((reg2e as NSString?)?.intValue ?? 0)
             let reg2fValue:Int16 = Int16((reg2f as NSString?)?.intValue ?? 0)
             
-            let tempVersion:UInt32 = UInt32(UInt32(reg2eValue) << 16 | UInt32(reg2fValue))
+            let sum = Int32(reg2fValue) << 16 | Int32(reg2eValue)
+            let tempVersion:UInt32 = UInt32(bitPattern: sum)
             var sbinary:String =  String(tempVersion, radix: 2)
             sbinary = StringUtils.padLeft(sbinary, 32, "0")
             if (sbinary.first == "1")// 新版本号
             {
-                
                 var tempNewVS:String = String(UInt32(StringUtils.subString(sbinary, (4 - 3), (14 + 3)), radix: 2) ?? 0)
                 tempNewVS = tempNewVS + "." + String(UInt32(StringUtils.subString(sbinary, 18, 6), radix: 2) ?? 0)
                 tempNewVS = tempNewVS + "." + String(UInt32(StringUtils.subString(sbinary, 24, 2), radix: 2) ?? 0)

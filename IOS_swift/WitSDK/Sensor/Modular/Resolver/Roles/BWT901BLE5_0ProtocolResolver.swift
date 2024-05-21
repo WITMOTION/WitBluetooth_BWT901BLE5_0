@@ -58,19 +58,12 @@ class BWT901BLE5_0ProtocolResolver : IProtocolResolver {
      * @date 2022/5/23 14:17
      */
     func findReturnData(_ returnData:[UInt8]) -> [UInt8]? {
-        let bytes:[UInt8] = returnData
-        var tempArr:[UInt8];
-        var i:Int = 0
-        while (i < bytes.count) {
-            if (bytes.count - i >= 20) {
-                tempArr = bytes[i..<(i + 20)].reversed()
-                if (tempArr.count == 20 && tempArr[0] == 0x55 && tempArr[1] == 0x71) {
-                    return tempArr;
-                    
-                }
+        var temp:[UInt8]
+        if let index55 = returnData.firstIndex(of: 0x55){
+            if index55 + 1 < returnData.count, returnData[index55 + 1] == 0x71{
+                temp = Array(returnData[index55...])
+                return Array(temp.prefix(20))
             }
-            
-            i = i + 1
         }
         return nil;
     }
