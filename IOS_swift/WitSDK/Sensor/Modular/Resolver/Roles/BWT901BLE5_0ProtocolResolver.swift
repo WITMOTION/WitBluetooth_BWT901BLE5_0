@@ -82,7 +82,7 @@ class BWT901BLE5_0ProtocolResolver : IProtocolResolver {
         // 移除非法数据
         while (activeByteDataBuffer.count > 0
                && activeByteDataBuffer[0] != 0x55
-               && activeByteDataBuffer[1] != 0x61) {
+               && (activeByteDataBuffer[1] != 0x61 || activeByteDataBuffer[1] != 0x71)) {
             activeByteDataBuffer.remove(at: 0)
         }
         
@@ -91,7 +91,7 @@ class BWT901BLE5_0ProtocolResolver : IProtocolResolver {
             activeByteDataBuffer = activeByteDataBuffer[20..<activeByteDataBuffer.count].reversed()
             
             // 必须是55 61的数据包
-            if (activeByteTemp[0] == 0x55 && activeByteTemp[1] == 0x61 && activeByteTemp.count == 20) {
+            if (activeByteTemp[0] == 0x55 && activeByteTemp[1] == 0x61) {
                 var fData:[Int16] = [Int16](repeating: 0, count: 9)
                 var i:Int = 0
                 while (i < 9) {
@@ -101,6 +101,18 @@ class BWT901BLE5_0ProtocolResolver : IProtocolResolver {
                     fData[i] = Int16(h << 8 | l & 0xff)
                     let Identify:String = String(format: "%2X",activeByteTemp[1])
                     deviceModel.setDeviceData("\(Identify)_\(i)", "\(fData[i])")
+                    i = i+1
+                }
+            }
+            else if(activeByteTemp[0] == 0x55 && activeByteTemp[1] == 0x71){
+                let readReg:Int = Int(activeByteTemp[3]) << 8 | Int(activeByteTemp[2])
+                var Pack:[Int16] = [Int16](repeating: 0, count: 4)
+                var i = 0
+                while (i < 4) {
+                    Pack[i] = Int16(activeByteTemp[5 + (i*2)]) << 8 | Int16(activeByteTemp[4 + (i*2)])
+                    var reg:String = String(format: "%02X",readReg + i).uppercased()
+                    reg = StringUtils.padLeft(reg, 2, "0")
+                    deviceModel.setDeviceData(reg, String(Pack[i]));
                     i = i+1
                 }
             }

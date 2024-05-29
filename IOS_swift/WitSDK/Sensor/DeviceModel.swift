@@ -196,6 +196,11 @@ extension DeviceModel {
     func sendProtocolData(_ data: [UInt8],_ waitTime:Int64) throws{
         try self.protocolResolver.sendData(sendData: data, deviceModel: self, waitTime: waitTime)
     }
+
+    // MARK: 发送协议数据 (同步)
+    func sendProtocolData(data: [UInt8]) throws{
+        try sendData(data: data)
+    }
     
     // MARK: 发送协议数据 (异步)
     func asyncSendProtocolData(_ data: [UInt8],_ waitTime:Int64,_ callback:@escaping () -> Void) throws{

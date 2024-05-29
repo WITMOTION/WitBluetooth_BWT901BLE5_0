@@ -36,23 +36,23 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
                 let magType:String? = deviceModel?.getDeviceData("72");// 磁场类型
                 if (StringUtils.IsNullOrEmpty(magType)) {
                     // 读取72磁场类型寄存器,后面解析磁场的时候要用到
-                    try deviceModel?.sendProtocolData([0xff, 0xaa, 0x27, 0x72, 0x00], 150);
+                    try sendProtocolData(data: [0xff, 0xaa, 0x27, 0x72, 0x00], waitTime: 0.5);
                 }
                 
                 let reg2e:String? = deviceModel?.getDeviceData("2E");// 版本号
                 let reg2f:String? = deviceModel?.getDeviceData("2F");// 版本号
                 if (StringUtils.IsNullOrEmpty(reg2e) || StringUtils.IsNullOrEmpty(reg2f)) {
                     // 读版本号
-                    try deviceModel?.sendProtocolData([0xff,0xaa, 0x27, 0x2E, 0x00], 150);
+                    try sendProtocolData(data: [0xff,0xaa, 0x27, 0x2E, 0x00], waitTime: 0.5);
                 }
                 
-                try deviceModel?.sendProtocolData([0xff, 0xaa, 0x27, 0x3a, 0x00], 150);// 磁场
-                try deviceModel?.sendProtocolData([0xff, 0xaa, 0x27, 0x51, 0x00], 150);// 四元数
+                try sendProtocolData(data: [0xff, 0xaa, 0x27, 0x3a, 0x00], waitTime: 0.5);// 磁场
+                try sendProtocolData(data: [0xff, 0xaa, 0x27, 0x51, 0x00], waitTime: 0.5);// 四元数
                 // 不需要读那么快的数据
                 count = count + 1
                 if (count % 50 == 0 || count < 5) {
-                    try deviceModel?.sendProtocolData([ 0xff, 0xaa, 0x27, 0x64, 0x00], 150);// 电量
-                    try deviceModel?.sendProtocolData([ 0xff, 0xaa, 0x27, 0x40, 0x00], 150);// 温度
+                    try sendProtocolData(data: [ 0xff, 0xaa, 0x27, 0x64, 0x00], waitTime: 0.5);// 电量
+                    try sendProtocolData(data: [ 0xff, 0xaa, 0x27, 0x40, 0x00], waitTime: 0.5);// 温度
 //                    WitCoreConnect coreConnect = deviceModel.getCoreConnect();
 //                    BluetoothBLEOption bluetoothBLEOption = coreConnect.getConfig().getBluetoothBLEOption();
 //                    deviceModel.setDeviceData(WitSensorKey.SignalValue, WitBluetoothManager.getRssi(bluetoothBLEOption.getMac()) + "");
@@ -62,6 +62,11 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
             }
         }
         
+    }
+
+    func sendProtocolData(data: [UInt8], waitTime:TimeInterval) throws{
+        try deviceModel?.sendProtocolData(data: data);
+        Thread.sleep(forTimeInterval: waitTime)
     }
     
     // 传感器关闭时
@@ -114,7 +119,7 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
             {
                 var tempNewVS:String = String(UInt32(StringUtils.subString(sbinary, (4 - 3), (14 + 3)), radix: 2) ?? 0)
                 tempNewVS = tempNewVS + "." + String(UInt32(StringUtils.subString(sbinary, 18, 6), radix: 2) ?? 0)
-                tempNewVS = tempNewVS + "." + String(UInt32(StringUtils.subString(sbinary, 24, 2), radix: 2) ?? 0)
+                tempNewVS = tempNewVS + "." + String(UInt32(StringUtils.subString(sbinary, 24, 8), radix: 2) ?? 0)
                 deviceModel.setDeviceData(WitSensorKey.VersionNumber, tempNewVS)
             } else {
                 deviceModel.setDeviceData(WitSensorKey.VersionNumber, "\(reg2eValue)")
@@ -175,14 +180,14 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
         
         // 温度
         if (!StringUtils.IsNullOrEmpty(regTemperature)) {
-            deviceModel.setDeviceData(WitSensorKey.Temperature, String(format: "%.3f", Double.parseDouble(regTemperature) / 100, 2));
+            deviceModel.setDeviceData(WitSensorKey.Temperature, String(format: "%.2f", Double.parseDouble(regTemperature) / 100, 2));
         }
         
         // 电量
         if (!StringUtils.IsNullOrEmpty(regPower)) {
             
             let regPowerValue:Int = Int(regPower ?? "0", radix: 10) ?? 0
-            let eqPercent:Float = getEqPercent(Float(Float(regPowerValue) / 100.0));
+            let eqPercent:Int = getEqPercent(Float(Float(regPowerValue) / 100.0));
             deviceModel.setDeviceData(WitSensorKey.ElectricQuantityPercentage,  String(eqPercent));
             
             
@@ -205,29 +210,58 @@ class BWT901BLE5_0DataProcessor : IDataProcessor {
         
         // 四元数
         if (!StringUtils.IsNullOrEmpty(regQ1)) {
-            deviceModel.setDeviceData(WitSensorKey.Q0, String(format:"%.3f", Double.parseDouble(regQ1) / 32768.0));
+            deviceModel.setDeviceData(WitSensorKey.Q0, String(format:"%.5f", Double.parseDouble(regQ1) / 32768.0));
         }
         if (!StringUtils.IsNullOrEmpty(regQ2)) {
-            deviceModel.setDeviceData(WitSensorKey.Q1, String(format:"%.3f", Double.parseDouble(regQ2) / 32768.0));
+            deviceModel.setDeviceData(WitSensorKey.Q1, String(format:"%.5f", Double.parseDouble(regQ2) / 32768.0));
         }
         if (!StringUtils.IsNullOrEmpty(regQ3)) {
-            deviceModel.setDeviceData(WitSensorKey.Q2, String(format:"%.3f", Double.parseDouble(regQ3) / 32768.0));
+            deviceModel.setDeviceData(WitSensorKey.Q2, String(format:"%.5f", Double.parseDouble(regQ3) / 32768.0));
         }
         if (!StringUtils.IsNullOrEmpty(regQ4)) {
-            deviceModel.setDeviceData(WitSensorKey.Q3, String(format:"%.3f", Double.parseDouble(regQ4) / 32768.0));
+            deviceModel.setDeviceData(WitSensorKey.Q3, String(format:"%.5f", Double.parseDouble(regQ4) / 32768.0));
         }
         
     }
     
     // 获得电流值
-    func getEqPercent(_ eq:Float) -> Float {
-        var p:Float = 0;
-        if (eq > 5.50) {
-            p = Interp(eq, [6.5, 6.8, 7.35, 7.75, 8.5, 8.8], [0.0, 10.0,30.0, 60.0, 90.0, 100.0]);
-        } else {
-            p = Interp(eq,
-                       [3.4, 3.5, 3.68, 3.7, 3.73, 3.77, 3.79, 3.82, 3.87, 3.93, 3.96, 3.99],
-                       [0.0, 5.0, 10.0, 15.0, 20.0, 30.0, 40.0, 50.0, 60.0, 75.0, 90.0, 100.0])
+    func getEqPercent(_ eq:Float) -> Int {
+        var p:Int = 0;
+        if(eq >= 3.96){
+            p = 100
+        }
+        else if(eq >= 3.93 && eq < 3.96){
+            p = 90
+        }
+        else if(eq >= 3.87 && eq < 3.93){
+            p = 75
+        }
+        else if(eq >= 3.82 && eq < 3.87){
+            p = 60
+        }
+        else if(eq >= 3.79 && eq < 3.82){
+            p = 50
+        }
+        else if(eq >= 3.77 && eq < 3.79){
+            p = 40
+        }
+        else if(eq >= 3.73 && eq < 3.77){
+            p = 30
+        }
+        else if(eq >= 3.70 && eq < 3.73){
+            p = 20
+        }
+        else if(eq >= 3.68 && eq < 3.70){
+            p = 15
+        }
+        else if(eq >= 3.50 && eq < 3.68){
+            p = 10
+        }
+        else if(eq >= 3.40 && eq < 3.50){
+            p = 5
+        }
+        else if(eq < 3.40){
+            p = 0
         }
         return p;
     }

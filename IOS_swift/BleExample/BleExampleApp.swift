@@ -226,12 +226,11 @@ class AppContext: ObservableObject ,IBluetoothEventObserver, IBwt901bleRecordObs
     // MARK: 当需要记录传感器的数据时会在这里通知您
     // MARK: You will be notified here when data from the sensor needs to be recorded
     func onRecord(_ bwt901ble: Bwt901ble) {
-        // 您可以在这里获得传感器的数据
-        // You can get sensor data here
-        let deviceData =  getDeviceDataToString(bwt901ble)
-        // 打印到控制台,您也可以在这里把数据记录到您的文件中
-        // Prints to the console, where you can also log the data to your file
-        print(deviceData)
+        // 您可以在这里获得传感器的数据  You can get sensor data here
+        // let deviceData =  getDeviceDataToString(bwt901ble)
+        
+        // 打印到控制台,您也可以在这里把数据记录到您的文件中  Prints to the console, where you can also log the data to your file
+        // print(deviceData)
     }
     
     // MARK: 开启自动执行线程

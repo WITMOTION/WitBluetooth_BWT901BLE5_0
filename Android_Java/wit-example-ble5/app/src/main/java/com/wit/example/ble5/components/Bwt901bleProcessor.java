@@ -44,7 +44,7 @@ public class Bwt901bleProcessor implements IDataProcessor {
      * @date 2023/2/27 19:23
      */
     private void sendProtocolData(DeviceModel deviceModel, byte[] bytes, int delay) {
-        deviceModel.sendProtocolData(bytes, delay);// 磁场
+        deviceModel.sendProtocolData(bytes);
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
@@ -92,8 +92,6 @@ public class Bwt901bleProcessor implements IDataProcessor {
                 if (count++ % 50 == 0 || count < 5) {
                     sendProtocolData(deviceModel, new byte[]{(byte) 0xff, (byte) 0xaa, (byte) 0x27, (byte) 0x64, (byte) 0x00}, 150);// 电量
                     sendProtocolData(deviceModel, new byte[]{(byte) 0xff, (byte) 0xaa, (byte) 0x27, (byte) 0x40, (byte) 0x00}, 150);// 温度
-
-
                 }
 
                 // 读取信号

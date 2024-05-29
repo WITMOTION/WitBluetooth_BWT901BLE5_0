@@ -88,8 +88,7 @@ public class Bwt901bleResolver implements IProtocolResolver {
      */
     @Override
     public void sendData(byte[] sendData, DeviceModel deviceModel) {
-        sendData(sendData, deviceModel, -1, (res) -> {
-        });
+        deviceModel.sendData(sendData);
     }
 
     /**
@@ -134,7 +133,7 @@ public class Bwt901bleResolver implements IProtocolResolver {
             activeByteDataBuffer.add(data[i]);
         }
 
-        while (activeByteDataBuffer.size() > 1 && activeByteDataBuffer.get(0) != 0x55 && activeByteDataBuffer.get(1) != 0x61) {
+        while (activeByteDataBuffer.size() > 1 && activeByteDataBuffer.get(0) != 0x55 && (activeByteDataBuffer.get(1) != 0x61 || activeByteDataBuffer.get(1) != 0x71)) {
             activeByteDataBuffer.remove(0);
         }
 
@@ -143,7 +142,7 @@ public class Bwt901bleResolver implements IProtocolResolver {
             activeByteDataBuffer = new ArrayList<>(activeByteDataBuffer.subList(20, activeByteDataBuffer.size()));
 
             // 必须是55 61的数据包
-            if (activeByteTemp.get(0) == 0x55 && activeByteTemp.get(1) == 0x61 && activeByteTemp.size() == 20) {
+            if (activeByteTemp.get(0) == 0x55 && activeByteTemp.get(1) == 0x61) {
                 float[] fData = new float[9];
                 int iStart = 0;
                 for (int i = 0; i < 9; i++) {
@@ -151,6 +150,17 @@ public class Bwt901bleResolver implements IProtocolResolver {
                     String Identify = Integer.toHexString(activeByteTemp.get(1));
                     Identify = StringUtils.padLeft(Identify, 2, '0');
                     deviceModel.setDeviceData(Identify + "_" + i, (fData[i]) + "");
+                }
+            }
+            else if(activeByteTemp.get(0) == 0x55 && activeByteTemp.get(1) == 0x71){
+                int readReg = activeByteTemp.get(3) << 8 | activeByteTemp.get(2) ;
+                short[] Pack = new short[4];
+                for (int i = 0; i < 4; i++) {
+                    Pack[i] = BitConvert.byte2short(new byte[]{activeByteTemp.get(5 + (i * 2)), activeByteTemp.get(4 + (i * 2))});
+
+                    String reg = Integer.toHexString(readReg + i).toUpperCase();
+                    reg = StringUtils.padLeft(reg, 2, '0');
+                    deviceModel.setDeviceData(reg, Pack[i] + "");
                 }
             }
         }
