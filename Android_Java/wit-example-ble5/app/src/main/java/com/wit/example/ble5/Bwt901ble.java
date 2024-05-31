@@ -291,7 +291,7 @@ public class Bwt901ble extends BleConnectStatusListener implements IListenKeyUpd
     public void onConnectStatusChanged(String mac, int status) {
         for (int i = 0; i < statusObservers.size(); i++) {
             IBluetoothConnectStatusObserver observer = statusObservers.get(i);
-            observer.onStatusChanged(status);
+            observer.onStatusChanged(mac, status);
         }
     }
 }

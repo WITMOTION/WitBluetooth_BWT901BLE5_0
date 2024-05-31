@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements IBluetoothFoundOb
 
     // 传感器连接状态回调 Sensor connection status callback
     @Override
-    public void onStatusChanged(int status) {
+    public void onStatusChanged(String mac, int status) {
         // 已连接 Connected
         if(status == STATUS_CONNECTED){
             // System.out.println("Device is connected");
