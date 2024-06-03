@@ -1,0 +1,5 @@
+sceneSetups:
+- path: Assets/Scenes/Bwt901ble5/Bwt901ble5.unity
+  isLoaded: 1
+  isActive: 1
+  isSubScene: 0
