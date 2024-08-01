@@ -23,11 +23,11 @@ class DeviceModel:
 
     # endregion
 
-    def __init__(self, deviceName, mac, callback_method):
+    def __init__(self, deviceName, BLEDevice, callback_method):
         print("Initialize device model")
         # 设备名称（自定义） Device Name
         self.deviceName = deviceName
-        self.mac = mac
+        self.BLEDevice = BLEDevice
         self.client = None
         self.writer_characteristic = None
         self.isOpen = False
@@ -59,7 +59,7 @@ class DeviceModel:
     async def openDevice(self):
         print("Opening device......")
         # 获取设备的服务和特征 Obtain the services and characteristic of the device
-        async with bleak.BleakClient(self.mac) as client:
+        async with bleak.BleakClient(self.BLEDevice, timeout=15) as client:
             self.client = client
             self.isOpen = True
             # 设备UUID常量 Device UUID constant
@@ -84,6 +84,7 @@ class DeviceModel:
             if self.writer_characteristic:
                 # 读取磁场四元数 Reading magnetic field quaternions
                 print("Reading magnetic field quaternions")
+                time.sleep(3)
                 asyncio.create_task(self.sendDataTh())
 
             if notify_characteristic:
@@ -109,7 +110,6 @@ class DeviceModel:
         print("The device is turned off")
 
     async def sendDataTh(self):
-        time.sleep(3)
         while self.isOpen:
             await self.readReg(0x3A)
             time.sleep(0.1)
@@ -235,12 +235,12 @@ class DeviceModel:
         tempBytes[4] = rValue >> 8
         return tempBytes
 
-    # 解锁
+    # 解锁 unlock
     def unlock(self):
         cmd = self.get_writeBytes(0x69, 0xb588)
         self.sendData(cmd)
 
-    # 保存
+    # 保存 save
     def save(self):
         cmd = self.get_writeBytes(0x00, 0x0000)
         self.sendData(cmd)
