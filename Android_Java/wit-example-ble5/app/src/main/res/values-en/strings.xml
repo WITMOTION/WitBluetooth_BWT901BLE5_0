@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Example</string>
+    <string name="scan">StartScan</string>
+    <string name="reset">Reset</string>
+    <string name="rrate">Retrieval rate </string>
+    <string name="bandwidth">Bandwidth</string>
+    <string name="reference">Reference angle</string>
+    <string name="magstart">Magnetic calibration</string>
+    <string name="magstop">End calibration</string>
+</resources>
