@@ -1,0 +1,1 @@
+﻿You must double click on the unity package file called Plugin.unitypackage in order to unpack the plugin files.

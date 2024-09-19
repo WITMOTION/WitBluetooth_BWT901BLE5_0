@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class BluetoothDeviceScript : MonoBehaviour
 {
-	public List<string> DiscoveredDeviceList;
+#if UNITY_IOS
+    public Dictionary<string, string> BLEStandardUUIDs = new Dictionary<string, string>();
+#endif
+
+    public List<string> DiscoveredDeviceList;
 
 	public Action InitializedAction;
 	public Action DeinitializedAction;
@@ -27,6 +31,8 @@ public class BluetoothDeviceScript : MonoBehaviour
 	public Dictionary<string, Dictionary<string, Action<string, string>>> DidUpdateNotificationStateForCharacteristicWithDeviceAddressAction;
 	public Dictionary<string, Dictionary<string, Action<string, byte[]>>> DidUpdateCharacteristicValueAction;
 	public Dictionary<string, Dictionary<string, Action<string, string, byte[]>>> DidUpdateCharacteristicValueWithDeviceAddressAction;
+	public Action<string, int> RequestMtuAction;
+	public Action<string, int> ReadRSSIAction;
 
 	// Use this for initialization
 	void Start ()
@@ -36,10 +42,14 @@ public class BluetoothDeviceScript : MonoBehaviour
 		DidUpdateNotificationStateForCharacteristicWithDeviceAddressAction = new Dictionary<string, Dictionary<string, Action<string, string>>> ();
 		DidUpdateCharacteristicValueAction = new Dictionary<string, Dictionary<string, Action<string, byte[]>>> ();
 		DidUpdateCharacteristicValueWithDeviceAddressAction = new Dictionary<string, Dictionary<string, Action<string, string, byte[]>>> ();
-	}
 
-	// Update is called once per frame
-	void Update ()
+#if UNITY_IOS
+        BLEStandardUUIDs["Heart Rate Measurement"] = "00002A37-0000-1000-8000-00805F9B34FB";
+#endif
+    }
+
+    // Update is called once per frame
+    void Update ()
 	{
 	}
 
@@ -61,6 +71,8 @@ public class BluetoothDeviceScript : MonoBehaviour
 	const string deviceDidUpdateNotificationStateForCharacteristic = "DidUpdateNotificationStateForCharacteristic";
 	const string deviceDidUpdateValueForCharacteristic = "DidUpdateValueForCharacteristic";
 	const string deviceLog = "Log";
+	const string deviceRequestMtu = "MtuChanged";
+	const string deviceReadRSSI = "DidReadRSSI";
 
 	public void OnBluetoothMessage (string message)
 	{
@@ -69,17 +81,19 @@ public class BluetoothDeviceScript : MonoBehaviour
 			char[] delim = new char[] { '~' };
 			string[] parts = message.Split (delim);
 
+			string log = "";
 			for (int i = 0; i < parts.Length; ++i)
-				BluetoothLEHardwareInterface.Log (string.Format ("Part: {0} - {1}", i, parts[i]));
+				log += string.Format("| {0}", parts[i]);
+			BluetoothLEHardwareInterface.Log(log);
 
-			if (message.Length >= deviceInitializedString.Length && message.Substring (0, deviceInitializedString.Length) == deviceInitializedString)
+            if (message.Length >= deviceInitializedString.Length && message.Substring (0, deviceInitializedString.Length) == deviceInitializedString)
 			{
 				if (InitializedAction != null)
 					InitializedAction ();
 			}
 			else if (message.Length >= deviceLog.Length && message.Substring (0, deviceLog.Length) == deviceLog)
 			{
-				Debug.Log (parts[1]);
+				BluetoothLEHardwareInterface.Log (parts[1]);
 			}
 			else if (message.Length >= deviceDeInitializedString.Length && message.Substring (0, deviceDeInitializedString.Length) == deviceDeInitializedString)
 			{
@@ -128,9 +142,9 @@ public class BluetoothDeviceScript : MonoBehaviour
 					// this is because it gets added to the a list in the DiscoveredDeviceList
 					// after that only the second callback will get called and only if there is
 					// advertising data available
-					if (!DiscoveredDeviceList.Contains (parts[1]))
+					if (!DiscoveredDeviceList.Contains (parts[1] + "|" + parts[2]))
 					{
-						DiscoveredDeviceList.Add (parts[1]);
+						DiscoveredDeviceList.Add (parts[1] + "|" + parts[2]);
 
 						if (DiscoveredPeripheralAction != null)
 							DiscoveredPeripheralAction (parts[1], parts[2]);
@@ -252,6 +266,30 @@ public class BluetoothDeviceScript : MonoBehaviour
 				if (parts.Length >= 4)
 					OnBluetoothData (parts[1], parts[2], parts[3]);
 			}
+			else if (message.Length >= deviceRequestMtu.Length && message.Substring(0, deviceRequestMtu.Length) == deviceRequestMtu)
+			{
+				if (parts.Length >= 3)
+                {
+					if (RequestMtuAction != null)
+					{
+						int mtu = 0;
+						if (int.TryParse(parts[2], out mtu))
+							RequestMtuAction(parts[1], mtu);
+					}
+                }
+			}
+			else if (message.Length >= deviceReadRSSI.Length && message.Substring(0, deviceReadRSSI.Length) == deviceReadRSSI)
+			{
+				if (parts.Length >= 3)
+				{
+					if (ReadRSSIAction != null)
+					{
+						int rssi = 0;
+						if (int.TryParse(parts[2], out rssi))
+							ReadRSSIAction(parts[1], rssi);
+					}
+				}
+			}
 		}
 	}
 
@@ -270,7 +308,12 @@ public class BluetoothDeviceScript : MonoBehaviour
 				deviceAddress = deviceAddress.ToUpper ();
 				characteristic = characteristic.ToUpper ();
 
-				BluetoothLEHardwareInterface.Log ("Device: " + deviceAddress + " Characteristic Received: " + characteristic);
+#if UNITY_IOS
+                if (BLEStandardUUIDs.ContainsKey(characteristic))
+                    characteristic = BLEStandardUUIDs[characteristic];
+#endif
+
+                BluetoothLEHardwareInterface.Log ("Device: " + deviceAddress + " Characteristic Received: " + characteristic);
 
 				string byteString = "";
 				foreach (byte b in bytes)
@@ -338,4 +381,15 @@ public class BluetoothDeviceScript : MonoBehaviour
 		Input.location.Stop ();
 	}
 #endif
+
+	public void OnApplicationQuit()
+	{
+		if (Application.isEditor)
+        {
+			BluetoothLEHardwareInterface.DeInitialize(() =>
+			{
+				BluetoothLEHardwareInterface.Log("Deinitialize complete");
+			});
+        }
+	}
 }
