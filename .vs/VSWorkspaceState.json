@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Windows_C#",
+    "\\Windows_C#\\Wit.Example_BWT901BLE",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device\\Connector",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device\\Connector\\Modular",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device\\Connector\\Modular\\Udp",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device\\Connector\\Role",
+    "\\Windows_C#\\Wit.Example_BWT901BLE\\WitSdk\\Device\\Device"
+  ],
+  "SelectedNode": "\\Windows_C#\\Wit.Example_BWT901BLE\\Program.cs",
+  "PreviewInSolutionExplorer": false
+}

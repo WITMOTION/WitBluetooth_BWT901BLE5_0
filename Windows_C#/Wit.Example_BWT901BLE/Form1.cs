@@ -148,6 +148,7 @@ namespace Wit.Example_BWT901BLE
         private void BWT901BLE_OnRecord(Bwt901ble BWT901BLE)
         {
             string text = GetDeviceData(BWT901BLE);
+            Console.WriteLine(text);//将更新的值输出
             Debug.WriteLine(text);
         }
 

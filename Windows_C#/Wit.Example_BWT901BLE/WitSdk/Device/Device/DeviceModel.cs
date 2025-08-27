@@ -50,7 +50,7 @@ namespace Wit.SDK.Modular.Sensor.Device
             ListenerKey = listenerKey == null ? "": listenerKey;
             DeviceName = deviceName;
             DeviceId = deviceId;
-
+            //AddDefaultAccX();
             // 设备配置
             DeviceOption = new DeviceOption()
             {
